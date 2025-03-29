@@ -1,68 +1,124 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer base {
+  html {
+    @apply text-white;
   }
-  a:hover {
-    color: #747bff;
+  
+  body {
+    @apply bg-transparent text-white;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+  
+  .btn {
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-300;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-500 text-white hover:bg-blue-600 shadow-lg shadow-blue-500/30;
+  }
+  
+  .btn-secondary {
+    @apply bg-transparent border-2 border-blue-500 text-blue-500 hover:bg-blue-500/10;
+  }
+  
+  .section-title {
+    @apply text-3xl font-bold mb-8 relative inline-block text-white;
+  }
+  
+  .section-title::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-1 bg-blue-500/30 rounded-full;
+  }
+  
+  .card {
+    @apply p-6 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 backdrop-blur-sm bg-black/30;
+  }
+}
+
+/* Underwater effects */
+.water-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.water-ripple::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  animation: ripple 3s infinite;
+}
+
+@keyframes ripple {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Floating bubbles */
+@keyframes float {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-100px) scale(1);
+    opacity: 0;
+  }
+}
+
+.animate-float {
+  animation: float linear infinite;
+}
+
+/* Light rays */
+@keyframes light-ray {
+  0% {
+    transform: translateX(-100%) rotate(12deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(12deg);
+  }
+}
+
+.animate-light-ray {
+  animation: light-ray 8s linear infinite;
+}
+
+/* Glass morphism effects */
+.glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/20;
+}
+
+/* Depth-based shadows */
+.depth-1 {
+  @apply shadow-lg shadow-blue-500/10;
+}
+
+.depth-2 {
+  @apply shadow-xl shadow-blue-500/20;
+}
+
+.depth-3 {
+  @apply shadow-2xl shadow-blue-500/30;
 }
