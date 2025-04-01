@@ -188,7 +188,7 @@ function App() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <a href="mailto:your.email@example.com" className="btn btn-primary">
+                <a href="mailto:sccunin@gmail.com" className="btn btn-primary">
                   Send Message
                 </a>
               </motion.div>
