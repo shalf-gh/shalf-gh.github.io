@@ -1,7 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
-import Particles from '@tsparticles/react';
-import type { Engine } from '@tsparticles/engine';
-import { loadSlim } from '@tsparticles/slim';
+import { useState, useEffect } from 'react';
 import WaterRipple from './WaterRipple';
 
 const WaterBackground = () => {
@@ -16,10 +13,6 @@ const WaterBackground = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const particlesInit = useCallback(async (engine: Engine) => {
-    await loadSlim(engine);
   }, []);
 
   return (
@@ -38,69 +31,6 @@ const WaterBackground = () => {
       {/* Water ripple effect */}
       <div className="absolute inset-0 pointer-events-auto">
         <WaterRipple />
-      </div>
-
-      {/* Particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        <Particles
-          id="water-particles"
-          init={particlesInit}
-          options={{
-            background: {
-              color: {
-                value: "transparent",
-              },
-            },
-            fpsLimit: 120,
-            particles: {
-              color: {
-                value: "#aaddff",
-              },
-              move: {
-                direction: "top",
-                enable: true,
-                outModes: {
-                  default: "out",
-                  top: "destroy",
-                  bottom: "none",
-                },
-                random: false,
-                speed: { min: 0.2, max: 1 },
-                straight: false,
-                gravity: {
-                  enable: false,
-                },
-              },
-              number: {
-                density: {
-                  enable: true,
-                  value_area: 800,
-                },
-                value: 40,
-              },
-              opacity: {
-                value: 0.2,
-                animation: {
-                  enable: true,
-                  speed: 0.2,
-                  opacity_min: 0.1,
-                },
-              },
-              shape: {
-                type: "circle",
-              },
-              size: {
-                value: { min: 1, max: 4 },
-                animation: {
-                  enable: true,
-                  speed: 0.5,
-                  size_min: 0.1,
-                },
-              },
-            },
-            detectRetina: true,
-          }}
-        />
       </div>
     </div>
   );

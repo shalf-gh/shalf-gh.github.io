@@ -27,8 +27,7 @@ function App() {
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['home', 'projects', 'about', 'contact'];
-      const scrollPosition = window.scrollY + 100; // Offset for header
-
+      // Offset for header
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
