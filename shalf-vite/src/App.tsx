@@ -17,16 +17,6 @@ function AppContent() {
   const [activeSection, setActiveSection] = useState('home');
   const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
-  const navigate = useNavigate();
-
-  // Handle redirect from 404.html
-  useEffect(() => {
-    const redirect = sessionStorage.redirect;
-    delete sessionStorage.redirect;
-    if (redirect && redirect !== location.pathname) {
-      navigate(redirect);
-    }
-  }, [navigate]);
 
   // Update active section based on scroll position and current path
   useEffect(() => {
@@ -343,10 +333,29 @@ function AppContent() {
   );
 }
 
+function RedirectHandler({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const redirect = sessionStorage.redirect;
+    if (redirect && redirect !== location.pathname) {
+      sessionStorage.removeItem('redirect');
+      navigate(redirect, { replace: true });
+    } else {
+      setIsReady(true);
+    }
+  }, [navigate]);
+
+  return isReady ? <>{children}</> : null;
+}
+
 function App() {
   return (
     <Router>
-      <AppContent />
+      <RedirectHandler>
+        <AppContent />
+      </RedirectHandler>
     </Router>
   );
 }
