@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import WaterBackground from './components/WaterBackground';
 import CluemojiGame from './pages/CluemojiGame';
 
@@ -17,6 +17,16 @@ function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
+  const navigate = useNavigate();
+
+  // Handle redirect from 404.html
+  useEffect(() => {
+    const redirect = sessionStorage.redirect;
+    delete sessionStorage.redirect;
+    if (redirect && redirect !== location.pathname) {
+      navigate(redirect);
+    }
+  }, [navigate]);
 
   // Update active section based on scroll position and current path
   useEffect(() => {
