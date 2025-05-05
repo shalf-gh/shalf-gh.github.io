@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, FC } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 
 interface Project {
@@ -26,10 +26,12 @@ const projects: Project[] = [
   }
 ];
 
-function AppContent() {
+const AppContent: React.FC = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
+  const [theme, setTheme] = useState('water');
+  const [showThemeDropdown, setShowThemeDropdown] = useState(false);
 
   const handleProjectsMouseEnter = () => {
     if (dropdownTimeout) {
@@ -43,6 +45,15 @@ function AppContent() {
       setShowProjectsDropdown(false);
     }, 200);
     setDropdownTimeout(timeoutId);
+  };
+
+  const toggleThemeDropdown = () => {
+    setShowThemeDropdown(!showThemeDropdown);
+  };
+
+  const changeTheme = (newTheme: string) => {
+    setTheme(newTheme);
+    setShowThemeDropdown(false);
   };
 
   // Update active section based on scroll position and current path
@@ -244,10 +255,40 @@ function AppContent() {
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      className="relative"
                     >
-                      <Link to="/#projects" className="btn btn-primary">
-                        View My Work
-                      </Link>
+                      <button
+                        onClick={toggleThemeDropdown}
+                        className="btn btn-primary"
+                      >
+                        Theme: {theme}
+                      </button>
+                      {showThemeDropdown && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 left-1/2 transform -translate-x-1/2"
+                        >
+                          <div
+                            className="py-1"
+                            role="menu"
+                            aria-orientation="vertical"
+                            aria-labelledby="theme-menu"
+                          >
+                            {['water', 'space'].map((themeOption) => (
+                              <button
+                                key={themeOption}
+                                onClick={() => changeTheme(themeOption)}
+                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                role="menuitem"
+                              >
+                                {themeOption}
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
                     </motion.div>
                   </motion.div>
                 </div>
