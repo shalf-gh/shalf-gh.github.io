@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useState, useEffect, FC } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 
 interface Project {
@@ -8,12 +8,20 @@ interface Project {
   description: string;
   technologies: string[];
   link: string;
-  image: string;
+  image: string | ((theme: string) => string);
   github?: string;
 }
 
 import ThemeBackground from './components/ThemeBackground';
 import CluemojiGame from './pages/CluemojiGame';
+
+const getProjectEmoji = (theme: string) => {
+  const emojiMap = {
+    water: '🐟',
+    space: '🔭'
+  };
+  return emojiMap[theme as keyof typeof emojiMap] || '🐟';
+};
 
 const projects: Project[] = [
   {
@@ -22,15 +30,15 @@ const projects: Project[] = [
     description: "New clue every week.",
     technologies: ["React", "TypeScript", "Tailwind"],
     link: "/cluemoji",
-    image: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' font-size='150'>🐟</text></svg>`
+    image: (theme: string) => `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' font-size='100'>${getProjectEmoji(theme)}</text></svg>`
   }
 ];
 
-const AppContent: React.FC = () => {
+function AppContent() {
   const [activeSection, setActiveSection] = useState('home');
   const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
-  const [theme, setTheme] = useState('water');
+  const [theme, setTheme] = useState('space');
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
 
   const handleProjectsMouseEnter = () => {
@@ -163,7 +171,7 @@ const AppContent: React.FC = () => {
     <div className="min-h-screen relative">
       {/* Background layer */}
       <div className="fixed inset-0 -z-10">
-        <ThemeBackground />
+        <ThemeBackground theme={theme as 'water' | 'space'} />
       </div>
       
       {/* Content layer */}
@@ -307,7 +315,7 @@ const AppContent: React.FC = () => {
                       whileTap={{ scale: 0.95 }}
                     >
                       <img
-                        src={project.image}
+                        src={typeof project.image === 'function' ? project.image(theme) : project.image}
                         alt={project.title}
                         className="w-full h-56 object-cover transition-transform duration-300 hover:scale-110"
                       />
