@@ -1,7 +1,15 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-const WaterRipple = () => {
+interface Ripple {
+  x: number;
+  y: number;
+  radius: number;
+  opacity: number;
+}
+
+const WaterRipple: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rippleRef = useRef<Ripple[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -10,35 +18,78 @@ const WaterRipple = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size to window size
-    const resizeCanvas = () => {
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-    };
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    // Ensure full window coverage
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    // Draw static background
-    const render = () => {
-      ctx.fillStyle = 'rgba(0, 40, 80, 0.8)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Mouse move event to create ripples
+    const createRipple = (x: number, y: number) => {
+      rippleRef.current.push({
+        x,
+        y,
+        radius: 0,
+        opacity: 0.3 // More visible
+      });
     };
-    render();
+
+    // Animation loop for ripples
+    const animateRipples = () => {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Soft blue background
+      ctx.fillStyle = 'rgba(0, 40, 80, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Update and draw ripples
+      rippleRef.current = rippleRef.current.filter(ripple => {
+        // Draw ripple
+        ctx.beginPath();
+        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(59, 130, 246, ${ripple.opacity})`;
+        ctx.lineWidth = 2; // Slightly thicker line
+        ctx.stroke();
+
+        // Update ripple
+        ripple.radius += 2; // Faster expansion
+        ripple.opacity = Math.max(0, ripple.opacity - 0.01);
+
+        // Remove ripple when it's too faint
+        return ripple.opacity > 0.01;
+      });
+
+      requestAnimationFrame(animateRipples);
+    };
+
+    // Event listeners
+    const handleMouseMove = (e: MouseEvent) => {
+      createRipple(e.clientX, e.clientY);
+    };
+
+    // Start animation
+    animateRipples();
+
+    // Add event listeners
+    window.addEventListener('mousemove', handleMouseMove);
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
-      style={{ opacity: 0.8 }}
+      className="fixed inset-0 pointer-events-none"
+      style={{ 
+        width: '100vw', 
+        height: '100vh', 
+        opacity: 0.8,
+        zIndex: 10 
+      }}
     />
   );
 };
 
-export default WaterRipple; 
+export default WaterRipple;

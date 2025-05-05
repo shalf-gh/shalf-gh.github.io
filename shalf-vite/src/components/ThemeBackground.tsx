@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import WaterRipple from './WaterRipple';
+import SwimmingFish from './SwimmingFish';
 
 // Improved seeded random number generator with better distribution
 function seededRandom(seed: number) {
@@ -124,9 +125,12 @@ const ThemeBackground = ({ theme = 'space' }: ThemeBackgroundProps) => {
       )}
 
       {theme === 'water' && (
-        <div className="absolute inset-0 pointer-events-auto">
-          <WaterRipple />
-        </div>
+        <>
+          <SwimmingFish />
+          <div className="absolute inset-0 pointer-events-auto">
+            <WaterRipple />
+          </div>
+        </>
       )}
     </div>
   );
