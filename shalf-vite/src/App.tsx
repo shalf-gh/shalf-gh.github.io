@@ -1,15 +1,28 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  technologies: string[];
+  link: string;
+  image: string;
+  github?: string;
+}
+
 import WaterBackground from './components/WaterBackground';
 import CluemojiGame from './pages/CluemojiGame';
 
-const projects = [
+const projects: Project[] = [
   {
+    id: 1,
     title: "Cluemoji",
     description: "New clue every week.",
     technologies: ["React", "TypeScript", "Tailwind"],
-    link: "/cluemoji"
+    link: "/cluemoji",
+    image: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' font-size='150'>🐟</text></svg>`
   }
 ];
 
@@ -241,90 +254,64 @@ function AppContent() {
                 </div>
               </section>
 
-              {/* Projects Section */}
-              <section id="projects" className="py-16">
-                <div className="container">
-                  <h2 className="section-title text-center text-white">Featured Projects</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {projects.map((project, index) => (
-                      <motion.div
-                        key={project.title}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="card bg-black/50 backdrop-blur-sm"
-                      >
-                        <h3 className="text-xl font-bold mb-2 text-white">{project.title}</h3>
-                        <p className="text-gray-300 mb-4">{project.description}</p>
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {project.technologies.map((tech) => (
-                            <span key={tech} className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-sm">
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                        <Link to={project.link} className="text-blue-500 hover:text-blue-400">
-                          View Project →
-                        </Link>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </section>
-
-              {/* About Section */}
-              <section id="about" className="py-16">
-                <div className="container">
-                  <h2 className="section-title text-center text-white">About Me</h2>
-                  <div className="max-w-2xl mx-auto text-center">
-                    <p className="text-gray-300 mb-6">
-                      I'm a passionate developer with expertise in building modern web applications.
-                      I love creating beautiful and functional user interfaces while ensuring
-                      robust backend functionality.
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-4">
-                      {['JavaScript', 'React', 'Node.js', 'TypeScript', 'Python'].map((skill) => (
-                        <span key={skill} className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* Contact Section */}
-              <section id="contact" className="py-16">
-                <div className="container">
-                  <h2 className="section-title text-center text-white">Get in Touch</h2>
-                  <div className="max-w-xl mx-auto text-center">
-                    <p className="text-gray-300 mb-8">
-                      I'm always open to discussing new projects, creative ideas, or opportunities
-                      to be part of your visions.
-                    </p>
+            {/* Projects Section */}
+            <section id="projects" className="py-16 min-h-screen flex flex-col justify-center">
+              <div className="container">
+                <h2 className="section-title text-center text-white text-4xl mb-12">My Projects</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                  {projects.map((project) => (
                     <motion.div
+                      key={project.id}
+                      className="bg-gray-800 rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <a href="mailto:sccunin@gmail.com" className="btn btn-primary">
-                        Send Message
-                      </a>
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-56 object-cover transition-transform duration-300 hover:scale-110"
+                      />
+                      <div className="p-8">
+                        <h3 className="text-2xl font-bold text-white mb-4 tracking-wide">{project.title}</h3>
+                        <p className="text-gray-300 mb-6 leading-relaxed">{project.description}</p>
+                        <div className="flex space-x-4">
+                          {project.link && (
+                            <Link
+                              to={project.link}
+                              className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+                            >
+                              View Project
+                            </Link>
+                          )}
+                          {project.github && (
+                            <a
+                              href={project.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-4 py-2 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition-colors"
+                            >
+                              GitHub
+                            </a>
+                          )}
+                        </div>
+                      </div>
                     </motion.div>
-                  </div>
+                  ))}
                 </div>
-              </section>
+              </div>
+            </section>
 
-              {/* Footer */}
-              <footer className="py-8 bg-black">
-                <div className="container text-center text-gray-400">
-                  <p>© 2025 Sean C. All rights reserved.</p>
-                  <div className="flex justify-center gap-4 mt-4">
-                    <a href="#" className="hover:text-blue-500 transition-colors">GitHub</a>
-                    <a href="#" className="hover:text-blue-500 transition-colors">LinkedIn</a>
-                    <a href="#" className="hover:text-blue-500 transition-colors">Twitter</a>
-                  </div>
+            {/* Footer */}
+            <footer className="py-8 bg-black">
+              <div className="container text-center text-gray-400">
+                <p> 2025 shalf. rights probably not reserved.</p>
+                <div className="flex justify-center gap-4 mt-4">
+                  <a href="#" className="hover:text-blue-500 transition-colors">GitHub</a>
+                  <a href="#" className="hover:text-blue-500 transition-colors">LinkedIn</a>
+                  {/* <a href="#" className="hover:text-blue-500 transition-colors">Twitter</a> */}
                 </div>
-              </footer>
+              </div>
+            </footer>
             </>
           } />
         </Routes>
