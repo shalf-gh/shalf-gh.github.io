@@ -12,7 +12,7 @@ interface Project {
   github?: string;
 }
 
-import WaterBackground from './components/WaterBackground';
+import ThemeBackground from './components/ThemeBackground';
 import CluemojiGame from './pages/CluemojiGame';
 
 const projects: Project[] = [
@@ -31,6 +31,20 @@ function AppContent() {
   const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
 
+  const handleProjectsMouseEnter = () => {
+    if (dropdownTimeout) {
+      clearTimeout(dropdownTimeout);
+    }
+    setShowProjectsDropdown(true);
+  };
+
+  const handleProjectsMouseLeave = () => {
+    const timeoutId = window.setTimeout(() => {
+      setShowProjectsDropdown(false);
+    }, 200);
+    setDropdownTimeout(timeoutId);
+  };
+
   // Update active section based on scroll position and current path
   useEffect(() => {
     const handleScroll = () => {
@@ -40,7 +54,7 @@ function AppContent() {
         return;
       }
 
-      const sections = ['home', 'projects', 'about', 'contact'];
+      const sections = ['home', 'projects'];
       const scrollPosition = window.scrollY + 100; // Add header offset
 
       for (const section of sections) {
@@ -138,86 +152,71 @@ function AppContent() {
     <div className="min-h-screen relative">
       {/* Background layer */}
       <div className="fixed inset-0 -z-10">
-        <WaterBackground />
+        <ThemeBackground />
       </div>
       
       {/* Content layer */}
       <div className="relative z-10">
         {/* Navigation */}
-        <nav className="fixed top-0 w-full bg-black/80 backdrop-blur-sm z-50">
-          <div className="container py-4">
-            <div className="flex items-center justify-between">
-              <motion.h1 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="text-2xl font-bold text-blue-500 cursor-pointer"
-              >
-                <Link to="/" className="hover:text-blue-400">Shalf</Link>
-              </motion.h1>
-              <div className="flex gap-6">
-                <Link
-                  to="/#home"
-                  onClick={(e) => handleNavClick(e, 'home')}
-                  className={`capitalize ${
-                    activeSection === 'home' ? 'text-blue-500' : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <motion.span
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+        <nav className="fixed top-0 left-0 right-0 z-50 bg-opacity-50 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center">
+                <Link to="/" className="flex-shrink-0">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="text-2xl font-bold text-white"
                   >
-                    home
-                  </motion.span>
+                    shalf
+                  </motion.div>
                 </Link>
-                <div 
-                  className="relative"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`capitalize ${
-                      activeSection === 'projects' ? 'text-blue-500' : 'text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    Projects
-                  </motion.button>
-                  {showProjectsDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="absolute top-full left-0 mt-2 bg-black/90 backdrop-blur-sm rounded-lg shadow-lg py-2 min-w-[200px]"
-                    >
-                      {projects.map((project) => (
-                        <Link
-                          key={project.title}
-                          to={project.link}
-                          className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-blue-500/20"
-                        >
-                          {project.title}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </div>
-                {['about', 'contact'].map((section) => (
+                <div className="ml-10 flex items-baseline space-x-4">
                   <Link
-                    key={section}
-                    to={`/#${section}`}
-                    onClick={(e) => handleNavClick(e, section)}
-                    className={`capitalize ${
-                      activeSection === section ? 'text-blue-500' : 'text-gray-400 hover:text-white'
-                    }`}
+                    to="/#home"
+                    className={`px-3 py-2 rounded-md text-sm font-medium ${activeSection === 'home' ? 'text-white bg-blue-600 bg-opacity-50' : 'text-gray-300 hover:bg-blue-600 hover:bg-opacity-30 hover:text-white'}`}
                   >
-                    <motion.span
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {section}
-                    </motion.span>
+                    Home
                   </Link>
-                ))}
+                  <div
+                    className="relative group"
+                    onMouseEnter={handleProjectsMouseEnter}
+                    onMouseLeave={handleProjectsMouseLeave}
+                  >
+                    <Link
+                      to="/#projects"
+                      className={`px-3 py-2 rounded-md text-sm font-medium ${activeSection === 'projects' ? 'text-white bg-blue-600 bg-opacity-50' : 'text-gray-300 hover:bg-blue-600 hover:bg-opacity-30 hover:text-white'}`}
+                    >
+                      Projects
+                    </Link>
+                    {showProjectsDropdown && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                      >
+                        <div
+                          className="py-1"
+                          role="menu"
+                          aria-orientation="vertical"
+                          aria-labelledby="projects-menu"
+                        >
+                          {projects.map((project) => (
+                            <Link
+                              key={project.id}
+                              to={project.link}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                              role="menuitem"
+                            >
+                              {project.title}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -240,7 +239,7 @@ function AppContent() {
                       Hi, I'm <span className="text-blue-500">Shalf</span>
                     </h1>
                     <p className="text-xl text-gray-300 mb-8">
-                      Full Stack Developer | UI/UX Designer | Problem Solver
+                      Full Stack Developer | UI/UX Designer
                     </p>
                     <motion.div
                       whileHover={{ scale: 1.05 }}
