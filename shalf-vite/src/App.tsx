@@ -35,136 +35,13 @@ const projects: Project[] = [
 ];
 
 function AppContent() {
-  const [activeSection, setActiveSection] = useState('home');
-  const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
-  const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
   const [theme, setTheme] = useState('space');
-  const [showThemeDropdown, setShowThemeDropdown] = useState(false);
+  const themes = ['space', 'water'];
 
-  const handleProjectsMouseEnter = () => {
-    if (dropdownTimeout) {
-      clearTimeout(dropdownTimeout);
-    }
-    setShowProjectsDropdown(true);
-  };
-
-  const handleProjectsMouseLeave = () => {
-    const timeoutId = window.setTimeout(() => {
-      setShowProjectsDropdown(false);
-    }, 200);
-    setDropdownTimeout(timeoutId);
-  };
-
-  const toggleThemeDropdown = () => {
-    setShowThemeDropdown(!showThemeDropdown);
-  };
-
-  const changeTheme = (newTheme: string) => {
-    setTheme(newTheme);
-    setShowThemeDropdown(false);
-  };
-
-  // Update active section based on scroll position and current path
-  useEffect(() => {
-    const handleScroll = () => {
-      // If we're on a project page, keep Projects highlighted
-      if (window.location.pathname !== '/') {
-        setActiveSection('projects');
-        return;
-      }
-
-      const sections = ['home', 'projects'];
-      const scrollPosition = window.scrollY + 100; // Add header offset
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
-    };
-
-    // Handle initial hash and hash changes
-    const handleHashChange = () => {
-      const hash = window.location.hash.slice(1);
-      if (hash) {
-        const element = document.getElementById(hash);
-        if (element) {
-          // Add offset for fixed header
-          const headerOffset = 100;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-          setActiveSection(hash);
-        }
-      }
-    };
-
-    // Set initial active section based on current path
-    if (window.location.pathname !== '/') {
-      setActiveSection('projects');
-    } else {
-      handleHashChange();
-    }
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('hashchange', handleHashChange);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('hashchange', handleHashChange);
-      if (dropdownTimeout) {
-        clearTimeout(dropdownTimeout);
-      }
-    };
-  }, [dropdownTimeout]);
-
-  // Add click handler for navigation links
-  const handleNavClick = (e: React.MouseEvent, section: string) => {
-    e.preventDefault();
-    
-    // If we're not on the root page, navigate to root first
-    if (window.location.pathname !== '/') {
-      window.location.href = `/#${section}`;
-      return;
-    }
-
-    // If we're on the root page, just scroll
-    const element = document.getElementById(section);
-    if (element) {
-      const headerOffset = 100;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-      window.location.hash = section;
-      setActiveSection(section);
-    }
-  };
-
-  const handleMouseEnter = () => {
-    if (dropdownTimeout) {
-      clearTimeout(dropdownTimeout);
-    }
-    setShowProjectsDropdown(true);
-  };
-
-  const handleMouseLeave = () => {
-    const timeout = window.setTimeout(() => {
-      setShowProjectsDropdown(false);
-    }, 1000);
-    setDropdownTimeout(timeout);
+  const cycleTheme = () => {
+    const currentIndex = themes.indexOf(theme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    setTheme(themes[nextIndex]);
   };
 
   return (
@@ -190,52 +67,6 @@ function AppContent() {
                     shalf
                   </motion.div>
                 </Link>
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <Link
-                    to="/#home"
-                    className={`px-3 py-2 rounded-md text-sm font-medium ${activeSection === 'home' ? 'text-white bg-blue-600 bg-opacity-50' : 'text-gray-300 hover:bg-blue-600 hover:bg-opacity-30 hover:text-white'}`}
-                  >
-                    Home
-                  </Link>
-                  <div
-                    className="relative group"
-                    onMouseEnter={handleProjectsMouseEnter}
-                    onMouseLeave={handleProjectsMouseLeave}
-                  >
-                    <Link
-                      to="/#projects"
-                      className={`px-3 py-2 rounded-md text-sm font-medium ${activeSection === 'projects' ? 'text-white bg-blue-600 bg-opacity-50' : 'text-gray-300 hover:bg-blue-600 hover:bg-opacity-30 hover:text-white'}`}
-                    >
-                      Projects
-                    </Link>
-                    {showProjectsDropdown && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
-                      >
-                        <div
-                          className="py-1"
-                          role="menu"
-                          aria-orientation="vertical"
-                          aria-labelledby="projects-menu"
-                        >
-                          {projects.map((project) => (
-                            <Link
-                              key={project.id}
-                              to={project.link}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                              role="menuitem"
-                            >
-                              {project.title}
-                            </Link>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -266,37 +97,11 @@ function AppContent() {
                       className="relative"
                     >
                       <button
-                        onClick={toggleThemeDropdown}
+                        onClick={cycleTheme}
                         className="btn btn-primary"
                       >
                         Theme: {theme}
                       </button>
-                      {showThemeDropdown && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 left-1/2 transform -translate-x-1/2"
-                        >
-                          <div
-                            className="py-1"
-                            role="menu"
-                            aria-orientation="vertical"
-                            aria-labelledby="theme-menu"
-                          >
-                            {['water', 'space'].map((themeOption) => (
-                              <button
-                                key={themeOption}
-                                onClick={() => changeTheme(themeOption)}
-                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                role="menuitem"
-                              >
-                                {themeOption}
-                              </button>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
                     </motion.div>
                   </motion.div>
                 </div>
