@@ -115,14 +115,14 @@ our souls, in providence, remain intertwined`
     id: 6,
     title: "6 months",
     content: `There is no life I get but this,
-I’ll never be a bird or fish.
-But even though I’ll have no wings,
+I'll never be a bird or fish.
+But even though I'll have no wings,
 I will have you - my everything.
 
-There is much I’ll never do
+There is much I'll never do
 but every day I look at you,
 my heart grows wings, and then I see
-there is no life I’d rather be.`
+there is no life I'd rather be.`
   },
   {
     id: 7,
@@ -498,7 +498,7 @@ const MaryPage = () => {
           {poems.map((poem, index) => (
             <div 
               key={poem.id}
-              ref={(el) => (poemSectionRefs.current[index] = el)}
+              ref={(el) => { poemSectionRefs.current[index] = el; }}
               className="min-h-screen flex items-center p-4 md:p-8 pt-16"
             >
               {/* Image positioned on the side opposite to the poem */}
