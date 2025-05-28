@@ -27,19 +27,19 @@ const getProjectEmoji = (theme: string) => {
 const projects: Project[] = [
   {
     id: 1,
+    title: "For Mary",
+    description: "First Anniversary",
+    technologies: ["React", "TypeScript", "Framer Motion"],
+    link: "/mary",
+    image: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' font-size='100'>❤️</text></svg>`
+  },
+  {
+    id: 2,
     title: "Cluemoji",
     description: "New clue every week.",
     technologies: ["React", "TypeScript", "Tailwind"],
     link: "/cluemoji",
     image: (theme: string) => `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' font-size='100'>${getProjectEmoji(theme)}</text></svg>`
-  },
-  {
-    id: 2,
-    title: "For Mary",
-    description: "Anniversary poems.",
-    technologies: ["React", "TypeScript", "Framer Motion"],
-    link: "/mary",
-    image: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' font-size='100'>❤️</text></svg>`
   }
 ];
 
