@@ -122,3 +122,19 @@
 .depth-3 {
   @apply shadow-2xl shadow-blue-500/30;
 }
+
+@layer utilities {
+  /* Add custom blink animation for the typewriter cursor */
+  .animate-blink {
+    animation: blink 0.7s step-end infinite;
+  }
+}
+
+@keyframes blink {
+  from, to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

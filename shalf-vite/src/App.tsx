@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 
 interface Project {
   id: number;
@@ -14,6 +14,7 @@ interface Project {
 
 import ThemeBackground from './components/ThemeBackground';
 import CluemojiGame from './pages/CluemojiGame';
+import MaryPage from './pages/MaryPage';
 
 const getProjectEmoji = (theme: string) => {
   const emojiMap = {
@@ -31,18 +32,30 @@ const projects: Project[] = [
     technologies: ["React", "TypeScript", "Tailwind"],
     link: "/cluemoji",
     image: (theme: string) => `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' font-size='100'>${getProjectEmoji(theme)}</text></svg>`
+  },
+  {
+    id: 2,
+    title: "For Mary",
+    description: "Anniversary poems.",
+    technologies: ["React", "TypeScript", "Framer Motion"],
+    link: "/mary",
+    image: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' font-size='100'>❤️</text></svg>`
   }
 ];
 
 function AppContent() {
   const [theme, setTheme] = useState('space');
   const themes = ['space', 'water'];
+  const location = useLocation();
 
   const cycleTheme = () => {
     const currentIndex = themes.indexOf(theme);
     const nextIndex = (currentIndex + 1) % themes.length;
     setTheme(themes[nextIndex]);
   };
+
+  // Check if we're on the Mary page
+  const isMaryPage = location.pathname === '/mary';
 
   return (
     <div className="min-h-screen relative">
@@ -53,7 +66,8 @@ function AppContent() {
       
       {/* Content layer */}
       <div className="relative z-10">
-        {/* Navigation */}
+        {/* Navigation - only show on non-Mary pages */}
+        {!isMaryPage && (
         <nav className="fixed top-0 left-0 right-0 z-50 bg-opacity-50 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
@@ -71,9 +85,11 @@ function AppContent() {
             </div>
           </div>
         </nav>
+        )}
 
         <Routes>
           <Route path="/cluemoji" element={<CluemojiGame />} />
+          <Route path="/mary" element={<MaryPage />} />
           <Route path="/" element={
             <>
               {/* Hero Section */}
